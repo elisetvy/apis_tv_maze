@@ -21,8 +21,13 @@ async function getShowsByTerm(term) {
   let response = await fetch(`${BASE_URL_SEARCH}${params}`);
 
   const data = await response.json();
-
-  // console.log("response", response, "data", data);
+  let shows = [];
+  for(let tvShowObj of data){
+    let showInfo = {id: tvShowObj.show.id, name: tvShowObj.show.name,
+      summary: tvShowObj.show.summary, image: tvShowObj.show.image.original || "https://tinyurl.com/tv-missing"};
+      shows.push("showInfo");
+    }
+    return shows;
 
   // return [
   //   {
@@ -58,7 +63,7 @@ function displayShows(shows) {
         <div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img
-              src="http://static.tvmaze.com/uploads/images/medium_portrait/160/401704.jpg"
+              src="${}"
               alt="Bletchly Circle San Francisco"
               class="w-25 me-3">
            <div class="media-body">
