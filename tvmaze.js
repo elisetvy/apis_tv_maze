@@ -4,29 +4,28 @@ const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
 const BASE_URL = 'https://api.tvmaze.com/';
-const BASE_URL_SEARCH = 'https://api.tvmaze.com/search/shows?';
+const SEARCH_END_POINT = 'search/shows?';
+const MISSING_IMAGE_URL = 'https://tinyurl.com/tv-missing';
 // const BASE_URL_EPISODES = `https://api.tvmaze.com/shows/${}/episodes`;
 
 
 /** Given a search term, search for tv shows that match that query.
- *
  *  Returns (promise) array of show objects: [show, show, ...].
  *    Each show object should contain exactly: {id, name, summary, image}
  *    (if no image URL given by API, put in a default image URL)
  */
 
 async function getShowsByTerm(term) {
-  // ADD: Remove placeholder & make request to TVMaze search shows API.
   const params = new URLSearchParams({ q: term });
-  let response = await fetch(`${BASE_URL_SEARCH}${params}`);
+  const response = await fetch(`${BASE_URL}${SEARCH_END_POINT}${params}`);
 
   const data = await response.json();
-  const shows = data.map(tvShowObj => tvShowObj = {
-    id: tvShowObj.show.id, name: tvShowObj.show.name,
-    summary: tvShowObj.show.summary, image: tvShowObj.show.image?.original || 'https://tinyurl.com/tv-missing'
+  return data.map(tvShowObj => tvShowObj = {
+    id: tvShowObj.show.id,
+    name: tvShowObj.show.name,
+    summary: tvShowObj.show.summary,
+    image: tvShowObj.show.image?.original || MISSING_IMAGE_URL
   });
-
-  return shows;
 
   // return [
   //   {
@@ -58,10 +57,6 @@ function displayShows(shows) {
   $showsList.empty();
 
   for (const show of shows) {
-    if (show.image === undefined) {
-      show.image = 'https://tinyurl.com/tv-missing';
-    }
-
     const $show = $(`
         <div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
@@ -79,11 +74,9 @@ function displayShows(shows) {
          </div>
        </div>
       `);
-
     $showsList.append($show);
   }
 }
-
 
 /** Handle search form submission: get shows from API and display.
  *    Hide episodes area (that only gets shown if they ask for episodes)
@@ -97,10 +90,13 @@ async function searchShowsAndDisplay() {
   displayShows(shows);
 }
 
-$searchForm.on("submit", async function handleSearchForm(evt) {
+/** Submits form information  */
+async function handleSearchForm(evt) {
   evt.preventDefault();
   await searchShowsAndDisplay();
-});
+}
+
+$searchForm.on("submit", handleSearchForm);
 
 
 /** Given a show ID, get from API and return (promise) array of episodes:
