@@ -21,13 +21,12 @@ async function getShowsByTerm(term) {
   let response = await fetch(`${BASE_URL_SEARCH}${params}`);
 
   const data = await response.json();
-  let shows = [];
-  for(let tvShowObj of data){
-    let showInfo = {id: tvShowObj.show.id, name: tvShowObj.show.name,
-      summary: tvShowObj.show.summary, image: tvShowObj.show.image.original || "https://tinyurl.com/tv-missing"};
-      shows.push("showInfo");
-    }
-    return shows;
+  const shows = data.map(tvShowObj => tvShowObj = {
+    id: tvShowObj.show.id, name: tvShowObj.show.name,
+    summary: tvShowObj.show.summary, image: tvShowObj.show.image?.original || 'https://tinyurl.com/tv-missing'
+  });
+
+  return shows;
 
   // return [
   //   {
@@ -59,12 +58,16 @@ function displayShows(shows) {
   $showsList.empty();
 
   for (const show of shows) {
+    if (show.image === undefined) {
+      show.image = 'https://tinyurl.com/tv-missing';
+    }
+
     const $show = $(`
         <div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img
-              src="${}"
-              alt="Bletchly Circle San Francisco"
+              src="${show.image}"
+              alt="${show.name}"
               class="w-25 me-3">
            <div class="media-body">
              <h5 class="text-primary">${show.name}</h5>
