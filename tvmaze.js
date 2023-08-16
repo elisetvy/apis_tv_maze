@@ -103,10 +103,18 @@ $searchForm.on("submit", handleSearchForm);
  *      { id, name, season, number }
  */
 
-// async function getEpisodesOfShow(id) { }
+async function getEpisodesOfShow(id) {
+
+}
 
 /** Write a clear docstring for this function... */
 
 // function displayEpisodes(episodes) { }
 
 // add other functions that will be useful / match our structure & design
+
+$showsList.on('click', '.Show-getEpisodes', (e) => {
+  e.preventDefault();
+  const showID = e.target.parentElement.parentElement.parentElement.getAttribute('data-show-id');
+  getEpisodesOfShow(showID);
+});
