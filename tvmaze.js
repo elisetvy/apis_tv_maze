@@ -104,12 +104,33 @@ $searchForm.on("submit", handleSearchForm);
  */
 
 async function getEpisodesOfShow(id) {
+  const response = await fetch(`${BASE_URL}shows/${id}/episodes`);
+  const data = await response.json();
+  //console.log(data, "epi objs")
+  const episodes = data.map(episodeObj => episodeObj = {
+    id: episodeObj.id,
+    name: episodeObj.name,
+    season: episodeObj.season,
+    number: episodeObj.number
+  });
+  displayEpisodes(episodes);
+}
+/**Controller function for getting episodes and displaying them */
+// function getEpisodesAndDisplay (){
+//   const episodes = getEpisodesOfShow()
+// }
+
+/** */
+function displayEpisodes(episodes) {
+  $episodesArea.show();
+  console.log(episodes, "epi array")
+  for(const episode of episodes){
+    console.log(episode, "episode")
+    console.log($("#episodesList"))
+    $("#episodesList").append(`<li>${episode.name} (season ${episode.season}, number ${episode.number})</li>`)
+  }
 
 }
-
-/** Write a clear docstring for this function... */
-
-// function displayEpisodes(episodes) { }
 
 // add other functions that will be useful / match our structure & design
 
