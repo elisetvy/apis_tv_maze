@@ -107,35 +107,39 @@ async function getEpisodesOfShow(id) {
   const response = await fetch(`${BASE_URL}shows/${id}/episodes`);
   const data = await response.json();
   //console.log(data, "epi objs")
-  const episodes = data.map(episodeObj => episodeObj = {
+  return data.map(episodeObj => episodeObj = {
     id: episodeObj.id,
     name: episodeObj.name,
     season: episodeObj.season,
     number: episodeObj.number
   });
-  displayEpisodes(episodes);
 }
 /**Controller function for getting episodes and displaying them */
-// function getEpisodesAndDisplay (){
-//   const episodes = getEpisodesOfShow()
-// }
+async function getEpisodesAndDisplay(target) {
+  // console.log(target, "target");
+  const showID = $(target).closest('.Show').attr('data-show-id');
+  // console.log("showid", showID);
+  // parentElement.parentElement.parentElement.data('data-show-id');
+  const episodes = await getEpisodesOfShow(showID);
+  displayEpisodes(episodes);
+}
 
 /** */
 function displayEpisodes(episodes) {
-  $episodesArea.show();
-  console.log(episodes, "epi array")
-  for(const episode of episodes){
-    console.log(episode, "episode")
-    console.log($("#episodesList"))
-    $("#episodesList").append(`<li>${episode.name} (season ${episode.season}, number ${episode.number})</li>`)
+  $("#episodesList").empty();
+  // console.log(episodes, "epi array")
+  for (const episode of episodes) {
+    // console.log(episode, "episode")
+    // console.log($("#episodesList"))
+    $("#episodesList").append(`<li>${episode.name} (season ${episode.season}, number ${episode.number})</li>`);
   }
-
+  $episodesArea.show();
 }
 
 // add other functions that will be useful / match our structure & design
 
-$showsList.on('click', '.Show-getEpisodes', (e) => {
+$showsList.on('click', '.Show-getEpisodes', async function (e) {
   e.preventDefault();
-  const showID = e.target.parentElement.parentElement.parentElement.getAttribute('data-show-id');
-  getEpisodesOfShow(showID);
+  // Call controller func
+  await getEpisodesAndDisplay(e.target);
 });
